@@ -1,0 +1,12 @@
+{
+  "preferences": [
+    {
+      "values": ["Football", "Tennis", "F1"],
+      "title": "Sport"
+    },
+    {
+      "values": ["U2", "Iron Maiden", "Metallica"],
+      "title": "Music"
+    }
+  ]
+}

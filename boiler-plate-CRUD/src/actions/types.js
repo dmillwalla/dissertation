@@ -1,0 +1,11 @@
+export const SIGN_IN = "SIGN_IN";
+export const SIGN_OUT = "SIGN_OUT";
+export const CREATE_STREAM = "CREATE_STREAM";
+export const FETCH_STREAMS = "FETCH_STREAMS";
+export const FETCH_STREAM = "FETCH_STREAM";
+export const DELETE_STREAM = "DELETE_STREAM";
+export const EDIT_STREAM = "EDIT_STREAM";
+export const ADD_PREFERENCE = "ADD_PREFERENCE";
+export const DELETE_PREFERENCE = "DELETE_PREFERENCE";
+export const GET_PREFERENCE = "GET_PREFERENCE";
+export const GET_RECOMMENDATIONS = "GET_RECOMMENDATIONS";

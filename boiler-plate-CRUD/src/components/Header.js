@@ -13,6 +13,9 @@ const Header = () => {
         <Link to="/recommendations" className="item">
           Recommendations
         </Link>
+        <Link to="/knowledge" className="item">
+          Knowledge Base
+        </Link>
         <GoogleAuth />
       </div>
     </div>

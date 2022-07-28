@@ -92,3 +92,8 @@ export const getRecommendations = () => async (dispatch) => {
   const response = await cityguide.get("/recommendations");
   dispatch({ type: GET_RECOMMENDATIONS, payload: response.data });
 };
+
+export const addFacts = (summary) => async (dispatch) => {
+  const response = await cityguide.post("/addFacts", { summary });
+  dispatch({ type: GET_RECOMMENDATIONS, payload: response.data });
+};

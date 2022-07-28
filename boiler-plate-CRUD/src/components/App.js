@@ -4,6 +4,7 @@ import Recommendations from "./marauder/Recommendations";
 import UserPreferences from "./marauder/UserPreferences";
 import Header from "./Header";
 import history from "../history";
+import KnowledgeBase from "./marauder/KnowledgeBase";
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
           <Switch>
             <Route path="/" exact component={UserPreferences} />
             <Route path="/recommendations" exact component={Recommendations} />
+            <Route path="/knowledge" exact component={KnowledgeBase} />
           </Switch>
         </div>
       </Router>

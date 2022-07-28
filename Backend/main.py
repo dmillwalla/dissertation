@@ -7,6 +7,8 @@ from franz.openrdf.connect import ag_connect
 
 from qwikidata.sparql import return_sparql_query_results
 
+import requests
+
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
@@ -55,6 +57,37 @@ def preference():
             return add_preference(preference_val)
         if request.method == 'DELETE':
             return delete_preference(preference_val)
+
+@app.route('/addFacts', methods=['POST'])
+def preference():
+    req_body = request.get_json()
+    summary = req_body["summary"]
+    FIELDS = "entities,sentiment,facts"
+    HOST = "nl.diffbot.com"
+    TOKEN = "de58f57da4009f6f6a4b4a18de63fbb1"
+    payload = {
+        "content": summary,
+        "lang": "en",
+        "format": "plain text with title",
+    }
+    res = requests.post("https://{}/v1/?fields={}&token={}".format(HOST, FIELDS, TOKEN), json=payload)
+    ret = res.json()
+    facts = ret["facts"]
+    response_array = []
+    for each_fact in facts:
+        subject = each_fact["entity"]["name"]
+        predicate = each_fact["property"]["name"]
+        object = each_fact["value"]["name"]
+        each_tuple = {"subject": subject, "predicate": predicate, "object": object}
+        with ag_connect("marauder-knowledge", create=False, host="http://34.78.42.44:10035") as marauder_knowledge_con:
+            print('connection successful for get recommendations')
+            subject_node = marauder_knowledge_con.createLiteral(subject)
+            predicate_node = marauder_knowledge_con.createURI("http://example.org/ontology/" + predicate)
+            object_node = marauder_knowledge_con.createLiteral(object)
+            marauder_knowledge_con.add(subject_node, predicate_node, object_node)
+            response_array.append(each_tuple)
+    return make_response(jsonify(response_array), 200)
+            
 
 @app.route('/recommendations', methods=['GET'])
 def recommendations():

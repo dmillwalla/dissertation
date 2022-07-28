@@ -14,6 +14,8 @@ import {
   ADD_PREFERENCE,
   GET_PREFERENCE,
   DELETE_PREFERENCE,
+  ADD_FACTS,
+  GET_KNOWLEDGE_RECOMMENDATIONS,
 } from "./types";
 
 export const signIn = (userId) => {
@@ -93,7 +95,12 @@ export const getRecommendations = () => async (dispatch) => {
   dispatch({ type: GET_RECOMMENDATIONS, payload: response.data });
 };
 
+export const getKnowledgeRecommendations = () => async (dispatch) => {
+  const response = await cityguide.get("/knowledgeRecommendations");
+  dispatch({ type: GET_KNOWLEDGE_RECOMMENDATIONS, payload: response.data });
+};
+
 export const addFacts = (summary) => async (dispatch) => {
   const response = await cityguide.post("/addFacts", { summary });
-  dispatch({ type: GET_RECOMMENDATIONS, payload: response.data });
+  dispatch({ type: ADD_FACTS, payload: response.data });
 };

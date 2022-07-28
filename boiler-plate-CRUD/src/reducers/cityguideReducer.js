@@ -6,6 +6,7 @@ import {
   DELETE_PREFERENCE,
   GET_RECOMMENDATIONS,
   ADD_FACTS,
+  GET_KNOWLEDGE_RECOMMENDATIONS,
 } from "../actions/types";
 
 export default (state = {}, action) => {
@@ -22,6 +23,8 @@ export default (state = {}, action) => {
     case GET_RECOMMENDATIONS:
       console.log("Inside GET_RECOMMENDATIONS", action.payload);
       return { ...state, recommendations: action.payload };
+    case GET_KNOWLEDGE_RECOMMENDATIONS:
+      return { ...state, knowledgeRecommendations: action.payload };
     case ADD_FACTS:
       return { ...state, facts: action.payload };
     default:

@@ -4,6 +4,7 @@ from flask_cors import CORS
 from franz.openrdf.sail.allegrographserver import AllegroGraphServer
 from franz.openrdf.repository.repository import Repository
 from franz.openrdf.connect import ag_connect
+from franz.openrdf.query.query import QueryLanguage
 
 from qwikidata.sparql import return_sparql_query_results
 
@@ -59,7 +60,7 @@ def preference():
             return delete_preference(preference_val)
 
 @app.route('/addFacts', methods=['POST'])
-def preference():
+def add_facts():
     req_body = request.get_json()
     summary = req_body["summary"]
     FIELDS = "entities,sentiment,facts"
@@ -86,6 +87,55 @@ def preference():
             object_node = marauder_knowledge_con.createLiteral(object)
             marauder_knowledge_con.add(subject_node, predicate_node, object_node)
             response_array.append(each_tuple)
+    return make_response(jsonify(response_array), 200)
+
+@app.route('/knowledgeRecommendations', methods=['GET'])
+def knowledge_recommendations():
+
+    interests = []
+    with ag_connect("marauder-test", create=False, host="http://34.78.42.44:10035") as marauder_con:
+        print('connection successful for get recommendations')
+        user = marauder_con.createURI("http://example.org/person/dmillwalla")
+        likes = marauder_con.createURI("http://example.org/ontology/likes")
+        statements = marauder_con.getStatements(user, likes, None)
+        with statements:
+            statements.enableDuplicateFilter()
+            for statement in statements:
+                interests.append(statement.getObject().getValue())
+
+    filter_clause = "FILTER ( "
+    first_interest = True
+
+    for interest in interests:
+
+        if not first_interest:
+            filter_clause += " || "
+
+        filter_clause += " regex(str(?o1), \"\\\\b" + interest + "\\\\b\", \"i\") "
+        first_interest = False
+
+    filter_clause += " ) ."
+
+    reco_query = """SELECT  ?s ?p WHERE
+        {
+            ?s ?p "Dublin" .
+            ?s ?p1 ?o1 .
+            """ + filter_clause + """
+        }
+        """
+
+    print(reco_query)
+    with ag_connect("marauder-knowledge", create=False, host="http://34.78.42.44:10035") as marauder_knowledge_con:
+        tuple_query = marauder_knowledge_con.prepareTupleQuery(QueryLanguage.SPARQL, reco_query)
+        knowledge_results = tuple_query.evaluate()
+        response_array = []
+        with knowledge_results:
+            for binding_set in knowledge_results:
+                    s = binding_set.getValue("s").getValue()
+                    p = binding_set.getValue("p").getValue()
+                    each_tuple = {"subject": s, "predicate": p}
+                    response_array.append(each_tuple)
+    
     return make_response(jsonify(response_array), 200)
             
 

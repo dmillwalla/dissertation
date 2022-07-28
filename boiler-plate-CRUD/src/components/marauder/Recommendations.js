@@ -1,10 +1,11 @@
 import React from "react";
 import { connect } from "react-redux";
-import { getRecommendations } from "../../actions";
+import { getRecommendations, getKnowledgeRecommendations } from "../../actions";
 
 class Recommendations extends React.Component {
   componentDidMount() {
     this.props.getRecommendations();
+    this.props.getKnowledgeRecommendations();
   }
 
   onSubmit = (formValues) => {
@@ -21,6 +22,17 @@ class Recommendations extends React.Component {
           {/* <td>{eachRecommendation.pLabel}</td>
           <td>{eachRecommendation.s2}</td> */}
           <td>{eachRecommendation.s2Label}</td>
+        </tr>
+      );
+    });
+  }
+
+  renderKnowledgeRecommendationsList(recoList) {
+    return recoList.map((eachRecommendation) => {
+      return (
+        <tr>
+          <td>{eachRecommendation.subject}</td>
+          <td>{eachRecommendation.predicate}</td>
         </tr>
       );
     });
@@ -48,12 +60,33 @@ class Recommendations extends React.Component {
     }
   }
 
+  renderKnowledgeRecommendations() {
+    if (this.props.recommendations) {
+      return (
+        <table className="ui celled table">
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>Relation</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.renderKnowledgeRecommendationsList(
+              this.props.knowledgeRecommendations
+            )}
+          </tbody>
+        </table>
+      );
+    }
+  }
+
   render() {
     return (
       <div>
         <h3>Recommendations</h3>
         Add A Map View here
         {this.renderRecommendations()}
+        {this.renderKnowledgeRecommendations()}
       </div>
     );
   }
@@ -62,9 +95,11 @@ class Recommendations extends React.Component {
 const mapStateToProps = (state) => {
   return {
     recommendations: state.cityguide.recommendations,
+    knowledgeRecommendations: state.cityguide.knowledgeRecommendations,
   };
 };
 
-export default connect(mapStateToProps, { getRecommendations })(
-  Recommendations
-);
+export default connect(mapStateToProps, {
+  getRecommendations,
+  getKnowledgeRecommendations,
+})(Recommendations);

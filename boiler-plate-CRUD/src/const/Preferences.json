@@ -7,6 +7,10 @@
     {
       "values": ["U2", "Iron Maiden", "Metallica"],
       "title": "Music"
+    },
+    {
+      "values": ["Poetry", "Painting"],
+      "title": "Culture"
     }
   ]
 }

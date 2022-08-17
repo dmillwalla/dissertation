@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 
-import { addFacts } from "../../actions";
+import { addFacts, addFactsTextacy } from "../../actions";
 
 class AddFacts extends React.Component {
   constructor(props) {
@@ -9,23 +9,25 @@ class AddFacts extends React.Component {
     this.state = { summary: "" };
   }
   onClick = () => {
-    if (this.state.summary && this.state.summary.trim())
+    if (this.state.summary && this.state.summary.trim()) {
       this.props.addFacts(this.state.summary);
+      this.props.addFactsTextacy(this.state.summary);
+    }
   };
   handleSummaryChange = (event) => {
     this.setState({ summary: event.target.value });
   };
   render() {
     return (
-      <div class="ui form">
-        <div class="field">
+      <div className="ui form">
+        <div className="field">
           <label>Text</label>
           <textarea
             value={this.state.summary}
             onChange={this.handleSummaryChange}
           ></textarea>
         </div>
-        <div class="ui submit button" onClick={this.onClick}>
+        <div className="ui submit button" onClick={this.onClick}>
           Submit
         </div>
       </div>
@@ -33,4 +35,4 @@ class AddFacts extends React.Component {
   }
 }
 
-export default connect(null, { addFacts })(AddFacts);
+export default connect(null, { addFacts, addFactsTextacy })(AddFacts);

@@ -6,6 +6,9 @@ from franz.openrdf.repository.repository import Repository
 from franz.openrdf.connect import ag_connect
 from franz.openrdf.query.query import QueryLanguage
 
+import spacy
+import textacy
+
 from qwikidata.sparql import return_sparql_query_results
 
 import requests
@@ -71,8 +74,23 @@ def add_facts():
         "lang": "en",
         "format": "plain text with title",
     }
+
+    overleaf_str = """
+
+    \\begin{table}[H] \n
+\\caption{Samuel Beckett facts with changed sentence structure} \n
+\\label{tab:} \n
+\\centering \n
+\\begin{tabular}{l l l l} \n
+\\toprule \n
+\\textbf{Subject} & \\textbf{Predicate} & \\textbf{Object} & \\textbf{Implicit/Explicit} \\\\ \n
+\\midrule \n
+
+    """
+
     res = requests.post("https://{}/v1/?fields={}&token={}".format(HOST, FIELDS, TOKEN), json=payload)
     ret = res.json()
+    # print(ret)
     facts = ret["facts"]
     response_array = []
     for each_fact in facts:
@@ -80,6 +98,7 @@ def add_facts():
         predicate = each_fact["property"]["name"]
         object = each_fact["value"]["name"]
         each_tuple = {"subject": subject, "predicate": predicate, "object": object}
+        overleaf_str += "" + subject + " & " + predicate + " & " + object + " \\\\ \n"
         with ag_connect("marauder-knowledge", create=False, host="http://34.78.7.88:10035") as marauder_knowledge_con:
             print('connection successful for get recommendations')
             subject_node = marauder_knowledge_con.createLiteral(subject)
@@ -87,6 +106,38 @@ def add_facts():
             object_node = marauder_knowledge_con.createLiteral(object)
             marauder_knowledge_con.add(subject_node, predicate_node, object_node)
             response_array.append(each_tuple)
+    overleaf_str += """
+
+    \\bottomrule\\\\ \n
+\\end{tabular} \n
+\\end{table} \n
+
+    """
+    print(overleaf_str)
+    return make_response(jsonify(response_array), 200)
+
+@app.route('/addFactsTextacy', methods=['POST'])
+def add_facts_textacy():
+    req_body = request.get_json()
+    summary = req_body["summary"]
+
+    summary_text = (summary)
+    # nlp = spacy.load('en_core_web_sm')
+    en = textacy.load_spacy_lang("en_core_web_sm")
+    text = textacy.make_spacy_doc(summary_text, lang=en)
+
+    text_ext = textacy.extract.subject_verb_object_triples(text)
+    response_array = []
+    for each_text_ext in text_ext:
+        print(each_text_ext)
+        subject = "".join([str(i) for i in each_text_ext[0]])
+        predicate = "".join([str(i) for i in each_text_ext[1]])
+        object = "".join([str(i) for i in each_text_ext[2]])
+        each_tuple = {"subject": subject, "predicate": predicate, "object": object}
+        print(each_tuple)
+        response_array.append(each_tuple)
+    list_text_ext = list(text_ext)
+    print(list_text_ext)
     return make_response(jsonify(response_array), 200)
 
 @app.route('/knowledgeRecommendations', methods=['GET'])
@@ -116,7 +167,7 @@ def knowledge_recommendations():
 
     filter_clause += " ) ."
 
-    reco_query = """SELECT  ?s ?p WHERE
+    reco_query = """SELECT  distinct ?s ?p WHERE
         {
             ?s ?p "Dublin" .
             ?s ?p1 ?o1 .

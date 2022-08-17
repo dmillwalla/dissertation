@@ -28,34 +28,41 @@ class Recommendations extends React.Component {
   }
 
   renderKnowledgeRecommendationsList(recoList) {
-    return recoList.map((eachRecommendation) => {
-      return (
-        <tr>
-          <td>{eachRecommendation.subject}</td>
-          <td>{eachRecommendation.predicate}</td>
-        </tr>
-      );
-    });
+    if (recoList) {
+      return recoList.map((eachRecommendation) => {
+        return (
+          <tr>
+            <td>{eachRecommendation.subject}</td>
+            <td>{eachRecommendation.predicate}</td>
+          </tr>
+        );
+      });
+    } else {
+      return <div></div>;
+    }
   }
 
   renderRecommendations() {
     if (this.props.recommendations) {
       return (
-        <table className="ui celled table">
-          <thead>
-            <tr>
-              {/* <th>S</th>
+        <div>
+          <h2>External Graph Database</h2>
+          <table className="ui celled table">
+            <thead>
+              <tr>
+                {/* <th>S</th>
               <th>P</th> */}
-              <th>Subject</th>
-              {/* <th>pLabel</th>
+                <th>Subject</th>
+                {/* <th>pLabel</th>
               <th>s2</th> */}
-              <th>Relation</th>
-            </tr>
-          </thead>
-          <tbody>
-            {this.renderRecommendationsList(this.props.recommendations)}
-          </tbody>
-        </table>
+                <th>Relation</th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.renderRecommendationsList(this.props.recommendations)}
+            </tbody>
+          </table>
+        </div>
       );
     }
   }
@@ -63,19 +70,22 @@ class Recommendations extends React.Component {
   renderKnowledgeRecommendations() {
     if (this.props.recommendations) {
       return (
-        <table className="ui celled table">
-          <thead>
-            <tr>
-              <th>Subject</th>
-              <th>Relation</th>
-            </tr>
-          </thead>
-          <tbody>
-            {this.renderKnowledgeRecommendationsList(
-              this.props.knowledgeRecommendations
-            )}
-          </tbody>
-        </table>
+        <div>
+          <h2>Internal Graph Database</h2>
+          <table className="ui celled table">
+            <thead>
+              <tr>
+                <th>Subject</th>
+                <th>Relation</th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.renderKnowledgeRecommendationsList(
+                this.props.knowledgeRecommendations
+              )}
+            </tbody>
+          </table>
+        </div>
       );
     }
   }
@@ -83,8 +93,7 @@ class Recommendations extends React.Component {
   render() {
     return (
       <div>
-        <h3>Recommendations</h3>
-        Add A Map View here
+        <h1>Recommendations</h1>
         {this.renderRecommendations()}
         {this.renderKnowledgeRecommendations()}
       </div>

@@ -15,6 +15,7 @@ import {
   GET_PREFERENCE,
   DELETE_PREFERENCE,
   ADD_FACTS,
+  ADD_FACTS_TEXTACY,
   GET_KNOWLEDGE_RECOMMENDATIONS,
 } from "./types";
 
@@ -103,4 +104,9 @@ export const getKnowledgeRecommendations = () => async (dispatch) => {
 export const addFacts = (summary) => async (dispatch) => {
   const response = await cityguide.post("/addFacts", { summary });
   dispatch({ type: ADD_FACTS, payload: response.data });
+};
+
+export const addFactsTextacy = (summary) => async (dispatch) => {
+  const response = await cityguide.post("/addFactsTextacy", { summary });
+  dispatch({ type: ADD_FACTS_TEXTACY, payload: response.data });
 };

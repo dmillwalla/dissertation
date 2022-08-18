@@ -1,0 +1,7 @@
+agraph-python
+Flask==2.1.2
+Flask_Cors==3.0.10
+qwikidata==0.4.1
+requests==2.28.0
+spacy==3.4.1
+textacy==0.12.0

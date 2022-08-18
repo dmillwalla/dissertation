@@ -16,13 +16,14 @@ import requests
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
+GRAPH_DB_SERVER = "http://34.78.7.88:10035"
 # graph_server = AllegroGraphServer("34.78.7.88","10035","","")
 # marauder_repository = graph_server.openCatalog('').getRepository('marauder-test', Repository.OPEN)
 # marauder_connection = marauder_repository.getConnection()
 
 def add_preference(preference):
     print('inside add preference')
-    with ag_connect("marauder-test", create=False, host="http://34.78.7.88:10035") as marauder_con:
+    with ag_connect("marauder-test", create=False, host=GRAPH_DB_SERVER) as marauder_con:
         print('connection successful for add preference')
         user = marauder_con.createURI("http://example.org/person/dmillwalla")
         likes = marauder_con.createURI("http://example.org/ontology/likes")
@@ -32,7 +33,7 @@ def add_preference(preference):
 
 def get_preferences():
     print('inside add preference')
-    with ag_connect("marauder-test", create=False, host="http://34.78.7.88:10035") as marauder_con:
+    with ag_connect("marauder-test", create=False, host=GRAPH_DB_SERVER) as marauder_con:
         print('connection successful for add preference')
         user = marauder_con.createURI("http://example.org/person/dmillwalla")
         likes = marauder_con.createURI("http://example.org/ontology/likes")
@@ -42,7 +43,7 @@ def get_preferences():
         return make_response(jsonify(response_array), 200)
 
 def delete_preference(preference):
-    with ag_connect("marauder-test", create=False, host="http://34.78.7.88:10035") as marauder_con:
+    with ag_connect("marauder-test", create=False, host=GRAPH_DB_SERVER) as marauder_con:
         print('connection successful for delete preference')
         user = marauder_con.createURI("http://example.org/person/dmillwalla")
         likes = marauder_con.createURI("http://example.org/ontology/likes")
@@ -99,7 +100,7 @@ def add_facts():
         object = each_fact["value"]["name"]
         each_tuple = {"subject": subject, "predicate": predicate, "object": object}
         overleaf_str += "" + subject + " & " + predicate + " & " + object + " \\\\ \n"
-        with ag_connect("marauder-knowledge", create=False, host="http://34.78.7.88:10035") as marauder_knowledge_con:
+        with ag_connect("marauder-knowledge", create=False, host=GRAPH_DB_SERVER) as marauder_knowledge_con:
             print('connection successful for get recommendations')
             subject_node = marauder_knowledge_con.createLiteral(subject)
             predicate_node = marauder_knowledge_con.createURI("http://example.org/ontology/" + predicate)
@@ -144,7 +145,7 @@ def add_facts_textacy():
 def knowledge_recommendations():
 
     interests = []
-    with ag_connect("marauder-test", create=False, host="http://34.78.7.88:10035") as marauder_con:
+    with ag_connect("marauder-test", create=False, host=GRAPH_DB_SERVER) as marauder_con:
         print('connection successful for get recommendations')
         user = marauder_con.createURI("http://example.org/person/dmillwalla")
         likes = marauder_con.createURI("http://example.org/ontology/likes")
@@ -176,7 +177,7 @@ def knowledge_recommendations():
         """
 
     print(reco_query)
-    with ag_connect("marauder-knowledge", create=False, host="http://34.78.7.88:10035") as marauder_knowledge_con:
+    with ag_connect("marauder-knowledge", create=False, host=GRAPH_DB_SERVER) as marauder_knowledge_con:
         tuple_query = marauder_knowledge_con.prepareTupleQuery(QueryLanguage.SPARQL, reco_query)
         knowledge_results = tuple_query.evaluate()
         response_array = []
@@ -193,7 +194,7 @@ def knowledge_recommendations():
 @app.route('/recommendations', methods=['GET'])
 def recommendations():
     interests = []
-    with ag_connect("marauder-test", create=False, host="http://34.78.7.88:10035") as marauder_con:
+    with ag_connect("marauder-test", create=False, host=GRAPH_DB_SERVER) as marauder_con:
         print('connection successful for get recommendations')
         user = marauder_con.createURI("http://example.org/person/dmillwalla")
         likes = marauder_con.createURI("http://example.org/ontology/likes")

@@ -30,6 +30,10 @@ After creating user, click on `edit` under anoynmous > Select `Grant read/write 
 
 Create 'marauder-test' and 'marauder-knowledge' repositories from the home page of AllegroGraph
 
+### Change AllegroGraph URL in main.py
+
+Change variable `GRAPH_DB_SERVER` in \Backend\main.py to the URL of the AllegroGraph server
+
 ## Get Diffbot key
 
 Go to https://www.diffbot.com/ and sign up with your Organisation ID to get a free trial
